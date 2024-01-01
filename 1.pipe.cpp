@@ -1,12 +1,12 @@
-// #include <iostream>
+#include <iostream>
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/wait.h>
 #include <string>
 
-// using std::cout;
-// using std::endl;
+using std::cout;
+using std::endl;
 
 
 
@@ -32,6 +32,7 @@ int main() {
         
         char buf[128] = {0};
         ssize_t len = 0;
+        // 阻塞读管道
         while((len = read(pip[0], buf, sizeof(buf) - 1)) > 0) {
             printf("父进程收到数据 len=%d: %s\n", len, buf);
             memset(buf, 0, sizeof(buf));
@@ -46,18 +47,18 @@ int main() {
     } else if(pid == 0) { // 子进程 写管道
         printf("son %d\n", getpid());
         close(pip[0]); // 关闭读
-        char msg[128] = {0};
 
-        for(int i = 1; i < 100; ++ i) {
+        char msg[128] = {0};
+        for(int i = 1; i < 10; ++ i) {
             memset(msg, 0, sizeof(msg));
             sprintf(msg, "message %d", i);
+            // 写管道
             int len = write(pip[1], msg, strlen(msg));
 
             if(len == -1) {
                 perror("write");
                 return -1;
             }
-
             sleep(1);
         }
 
