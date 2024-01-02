@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# 编译 server 和 client
+g++ 5.socket_server.cpp -std=c++11 -lpthread -o server
+g++ 5.socket_client.cpp -std=c++11 -lpthread -o client
+
+# 启动 server 在前台
+./server &
+sleep 2
+
+# 保存 server 的 PID
+server_pid=$!
+
+# 启动三个 client 在后台
+./client &
+./client &
+./client &
+
+# 等待 server 运行 20 秒
+sleep 20
+
+# 终止 server 进程
+kill -INT $server_pid
+
+# 清理编译生成的可执行文件
+rm server client
